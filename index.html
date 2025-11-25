@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Boxe | Raw Material Tester</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="material-symbols-rounded">sports_mma</span>
+            API BOXE
+        </div>
+
+        <nav>
+            <div class="nav-group">
+                <h3>Boxeadores</h3>
+                <div class="nav-list">
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-list')">
+                        <span class="material-symbols-rounded">list_alt</span>
+                        Listar Todos <span class="method-tag get">GET</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-get')">
+                        <span class="material-symbols-rounded">person_search</span>
+                        Buscar ID <span class="method-tag get">GET</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-search')">
+                        <span class="material-symbols-rounded">search</span>
+                        Pesquisar <span class="method-tag get">GET</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-post')">
+                        <span class="material-symbols-rounded">person_add</span>
+                        Criar Novo <span class="method-tag post">POST</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-put')">
+                        <span class="material-symbols-rounded">edit</span>
+                        Atualizar <span class="method-tag put">PUT</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('boxeadores-delete')">
+                        <span class="material-symbols-rounded">delete</span>
+                        Remover <span class="method-tag delete">DEL</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="nav-group" style="margin-top: 24px;">
+                <h3>Lutas</h3>
+                <div class="nav-list">
+                    <button class="nav-btn" onclick="loadEndpoint('lutas-list')">
+                        <span class="material-symbols-rounded">sports_kabaddi</span>
+                        Listar Todas <span class="method-tag get">GET</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('lutas-post')">
+                        <span class="material-symbols-rounded">calendar_add_on</span>
+                        Agendar Luta <span class="method-tag post">POST</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('lutas-delete')">
+                        <span class="material-symbols-rounded">cancel</span>
+                        Cancelar Luta <span class="method-tag delete">DEL</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="nav-group" style="margin-top: 24px;">
+                <h3>Categorias</h3>
+                <div class="nav-list">
+                    <button class="nav-btn" onclick="loadEndpoint('categorias-list')">
+                        <span class="material-symbols-rounded">category</span>
+                        Listar Todas <span class="method-tag get">GET</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadEndpoint('categorias-post')">
+                        <span class="material-symbols-rounded">add_circle</span>
+                        Nova Categoria <span class="method-tag post">POST</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="top-bar">
+            <div class="api-config">
+                <label>URL API:</label>
+                <input type="text" id="api-url" value="https://api-boxe1.onrender.com">
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="color: var(--raw-text-secondary); font-size: 12px; display: none; @media (min-width: 1000px) { display: block; }">
+                    QUARKUS // RESTEASY
+                </div>
+                <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Alternar Tema">
+                    <span class="material-symbols-rounded">light_mode</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            <div id="welcome-screen" class="welcome">
+                <span class="material-symbols-rounded">terminal</span>
+                <h2>Selecione um endpoint no menu lateral</h2>
+                <p>Use o console para interagir com os recursos da API.</p>
+            </div>
+
+            <div id="endpoint-panel" class="hidden">
+                <div id="main-card" class="raw-card">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="huge-title">
+                                <span id="page-icon" class="material-symbols-rounded" style="vertical-align: bottom; margin-right: 12px; font-size: 48px; color: var(--accent-primary);"></span>
+                                <span id="page-title">Boxeadores</span>
+                            </h1>
+                            <span id="page-method" class="badge-method get">GET</span>
+                            <div id="page-url" class="endpoint-path">/v1/boxeadores</div>
+                        </div>
+                    </div>
+
+                    <div id="dynamic-inputs"></div>
+
+                    <div id="id-preview-container" class="hidden">
+                        <label class="field-label">Preview do Item (ID: <span id="preview-id-val"></span>)</label>
+                        <div id="id-preview-box" class="preview-box">
+                            <span class="material-symbols-rounded spin">sync</span> Buscando dados...
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; position: relative;">
+                        <button id="btn-execute" class="action-btn" onclick="sendRequest()">
+                            Executar Requisição <span class="material-symbols-rounded">arrow_forward</span>
+                        </button>
+
+                        <div id="cooldown-ui" class="cooldown-wrapper hidden">
+                            <div id="cooldown-bar" class="cooldown-bar"></div>
+                            <div class="cooldown-label">
+                                <span class="material-symbols-rounded spin">hourglass_empty</span>
+                                <span>Aguarde<span class="loading-dots"></span></span>
+                                <span id="cooldown-timer" style="margin-left: 4px;">60s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="response-container" class="response-area hidden">
+                        <label class="field-label">Resposta do Servidor</label>
+                        <div class="code-block">
+                            <div id="status-indicator" class="status-indicator">200 OK</div>
+                            <pre id="response-output"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="error-modal" class="modal-overlay hidden" onclick="closeModalOnClickOutside(event, 'error-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="material-symbols-rounded icon-error">warning</span>
+                <h2>JSON Inválido</h2>
+            </div>
+            <p id="modal-message">A sintaxe do JSON enviado está incorreta. Verifique vírgulas, aspas e chaves.</p>
+            <button class="action-btn modal-btn" onclick="closeModal('error-modal')">Entendido</button>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal-overlay hidden" onclick="closeModalOnClickOutside(event, 'success-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="material-symbols-rounded icon-success">check_circle</span>
+                <h2>Sucesso!</h2>
+            </div>
+            <p id="success-message">Criado com sucesso.</p>
+            <button class="action-btn modal-btn success" onclick="closeModal('success-modal')">Continuar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
